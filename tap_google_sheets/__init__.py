@@ -45,7 +45,7 @@ def main():
 
         config = parsed_args.config
         files = config.get('files')
-        spreadsheet_ids = [f.get("id") for f in files]
+        spreadsheet_ids = [f for f in files]
 
         if parsed_args.discover:
             do_discover(client, spreadsheet_ids)

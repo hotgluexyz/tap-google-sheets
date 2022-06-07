@@ -6,11 +6,15 @@ def discover(client,spreadsheet_ids):
     catalog = Catalog([])
     for spreadsheet_id in spreadsheet_ids:
         for stream, stream_obj in STREAMS.items():
-            stream_object = stream_obj(client, spreadsheet_id)
+            stream_object = stream_obj(client, spreadsheet_id.get("id"))
             schemas, field_metadata = stream_object.get_schemas()
-
+            ignore_list = ["file_metadata","spreadsheet_metadata","sheet_metadata","sheets_loaded"]
             # loop over the schema and prepare catalog
             for stream_name, schema_dict in schemas.items():
+                if stream_name not in ignore_list:
+                   stream_name_new = f"{spreadsheet_id.get('name')}-{stream_name}"
+                   field_metadata[stream_name_new]=  field_metadata[stream_name]
+                   stream_name = stream_name_new
 
                 schema = Schema.from_dict(schema_dict)
                 mdata = field_metadata[stream_name]

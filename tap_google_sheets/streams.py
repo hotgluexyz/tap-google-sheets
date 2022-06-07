@@ -449,7 +449,7 @@ class SheetsLoadData(GoogleSheets):
     replication_method = "FULL_TABLE"
     params = {}
 
-    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted):
+    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted,sheet_name):
         """
         Load sheet's records if that sheet is selected for sync
         """
@@ -475,6 +475,8 @@ class SheetsLoadData(GoogleSheets):
                     # LOGGER.info('sheet_metadata_transformed = {}'.format(sheet_metadata_transformed))
                     sheet_metadata.append(sheet_metadata_transformed)
 
+                    sheet_title_old = sheet_title
+                    sheet_title = f"{sheet_name}-{sheet_title}"
                     # SHEET_DATA
                     # Should this worksheet tab be synced?
                     if sheet_title in selected_streams:
@@ -528,7 +530,7 @@ class SheetsLoadData(GoogleSheets):
                                 "majorDimension": "ROWS"
                             }
                             # GET sheet_data for a worksheet tab
-                            sheet_data, time_extracted = self.get_data(stream_name=sheet_title, range_rows=range_rows)
+                            sheet_data, time_extracted = self.get_data(stream_name=sheet_title_old, range_rows=range_rows)
                             # Data is returned as a list of arrays, an array of values for each row
                             sheet_data_rows = sheet_data.get('values', [])
                             self.params = {
@@ -536,7 +538,7 @@ class SheetsLoadData(GoogleSheets):
                                 "valueRenderOption": "UNFORMATTED_VALUE",
                                 "majorDimension": "ROWS"
                             }
-                            unformatted_sheet_data, _ = self.get_data(stream_name=sheet_title, range_rows=range_rows)
+                            unformatted_sheet_data, _ = self.get_data(stream_name=sheet_title_old, range_rows=range_rows)
                             unformatted_sheet_data_rows = unformatted_sheet_data.get('values', [])
 
                             # Transform batch of rows to JSON with keys for each column
