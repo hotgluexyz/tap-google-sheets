@@ -12,7 +12,8 @@ def discover(client,spreadsheet_ids):
             # loop over the schema and prepare catalog
             for stream_name, schema_dict in schemas.items():
                 if stream_name not in ignore_list:
-                   stream_name_new = f"{spreadsheet_id.get('name')}-{stream_name}"
+                   standard_name = ''.join(x for x in spreadsheet_id.get('name').title() if not x.isspace())
+                   stream_name_new = f"{standard_name}_{stream_name}"
                    field_metadata[stream_name_new]=  field_metadata[stream_name]
                    stream_name = stream_name_new
 

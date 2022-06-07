@@ -476,7 +476,8 @@ class SheetsLoadData(GoogleSheets):
                     sheet_metadata.append(sheet_metadata_transformed)
 
                     sheet_title_old = sheet_title
-                    sheet_title = f"{sheet_name}-{sheet_title}"
+                    standard_name = ''.join(x for x in sheet_name.title() if not x.isspace())
+                    sheet_title = f"{standard_name}_{sheet_title}"
                     # SHEET_DATA
                     # Should this worksheet tab be synced?
                     if sheet_title in selected_streams:
