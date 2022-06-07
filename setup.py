@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-setup(name='tap-google-sheets',
+setup(name='tap-google-sheets-beta',
       version='1.3.2',
       description='Singer.io tap for extracting data from the Google Sheets v4 API',
       author='jeff.huth@bytecode.io',
@@ -24,7 +24,7 @@ setup(name='tap-google-sheets',
       },
       entry_points='''
           [console_scripts]
-          tap-google-sheets=tap_google_sheets:main
+          tap-google-sheets-beta=tap_google_sheets:main
       ''',
       packages=find_packages(),
       package_data={
