@@ -25,7 +25,11 @@ def sync(client, config, catalog, state):
         # return if no stream is selected
         LOGGER.info("No stream is selected.")
         return
-    for spreadsheet_id in config.get("spreadsheet_id"):
+
+    files = config.get('files')
+    spreadsheet_ids = [f.get("id") for f in files]
+
+    for spreadsheet_id in spreadsheet_ids:
         # loop through main streams
         for stream_name, stream_obj in STREAMS.items():
 

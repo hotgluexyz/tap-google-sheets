@@ -15,13 +15,12 @@ REQUIRED_CONFIG_KEYS = [
     'client_id',
     'client_secret',
     'refresh_token',
-    'spreadsheet_id',
+    'files',
     'start_date',
     'user_agent'
 ]
 
 def do_discover(client, spreadsheet_ids):
-
     LOGGER.info('Starting discover')
     catalog = discover(client, spreadsheet_ids)
     json.dump(catalog.to_dict(), sys.stdout, indent=2)
@@ -45,10 +44,11 @@ def main():
             state = parsed_args.state
 
         config = parsed_args.config
-        spreadsheet_id = config.get('spreadsheet_id')
+        files = config.get('files')
+        spreadsheet_ids = [f.get("id") for f in files]
 
         if parsed_args.discover:
-            do_discover(client, spreadsheet_id)
+            do_discover(client, spreadsheet_ids)
         elif parsed_args.catalog:
             sync(client=client,
                  config=config,
