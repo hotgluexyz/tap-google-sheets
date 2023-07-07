@@ -35,6 +35,8 @@ def write_schema(catalog, stream_name):
     """
     stream = catalog.get_stream(stream_name)
     schema = stream.schema.to_dict()
+    if schema.get('properties') and schema['properties'].get('package'):
+            schema['properties']['package'] = {"type": ["null", "string"]}
     try:
         singer.write_schema(stream_name, schema, stream.key_properties)
         LOGGER.info('Writing schema for: {}'.format(stream_name))
@@ -190,6 +192,9 @@ class GoogleSheets:
                     except Exception as err:
                         LOGGER.error('{}'.format(err))
                         raise RuntimeError(err)
+
+                    if transformed_record.get('package'):
+                        transformed_record['package'] = str(transformed_record['package'])
                     write_record(
                         stream_name=stream_name,
                         record=transformed_record,
@@ -232,6 +237,8 @@ class GoogleSheets:
         update_currently_syncing(self.state, self.stream_name)
         selected_fields = get_selected_fields(catalog, self.stream_name)
         LOGGER.info('Stream: {}, selected_fields: {}'.format(self.stream_name, selected_fields))
+        
+            
         write_schema(catalog, self.stream_name)
         if not time_extracted:
             time_extracted = utils.now()
