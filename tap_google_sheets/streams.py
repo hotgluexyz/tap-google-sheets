@@ -449,7 +449,7 @@ class SheetsLoadData(GoogleSheets):
     replication_method = "FULL_TABLE"
     params = {}
 
-    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted,sheet_name):
+    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted,sheet_name,work_sheets=[]):
         """
         Load sheet's records if that sheet is selected for sync
         """
@@ -461,6 +461,9 @@ class SheetsLoadData(GoogleSheets):
             for sheet in sheets:
                 sheet_title = sheet.get('properties', {}).get('title')
                 sheet_id = sheet.get('properties', {}).get('sheetId')
+                #Skip sheet if not in work_sheets
+                if work_sheets and sheet_title not in work_sheets:
+                    continue
 
                 # GET sheet_metadata and columns
                 sheet_schema, columns = schema.get_sheet_metadata(sheet, self.spreadsheet_id, self.client)
