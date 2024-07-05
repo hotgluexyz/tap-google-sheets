@@ -49,15 +49,24 @@ def sync(client, config, catalog, state):
                 sheets = spreadsheet_metadata.get("sheets")
                 # class to load sheet's data
                 sheets_load_data = SheetsLoadData(client, spreadsheet_id.get("id"), config.get("start_date"))
-
+                work_sheets = spreadsheet_id.get("worksheet_names",[])
+                if work_sheets and isinstance(work_sheets, str):
+                    work_sheets = work_sheets.split(",")
+                    
+                if not work_sheets:
+                    work_sheets = []    
                 # perform sheet's sync and get sheet's metadata and sheet loaded records for "sheet_metadata" and "sheets_loaded" streams
-                sheet_metadata_records, sheets_loaded_records = sheets_load_data.load_data(catalog=catalog,
-                                                                                            state=state,
-                                                                                            selected_streams=selected_streams,
-                                                                                            sheets=sheets,
-                                                                                            spreadsheet_time_extracted=time_extracted,
-                                                                                            sheet_name = spreadsheet_id.get("name")
-                                                                                            )
+                sheet_metadata_records, sheets_loaded_records = (
+                    sheets_load_data.load_data(
+                        catalog=catalog,
+                        state=state,
+                        selected_streams=selected_streams,
+                        sheets=sheets,
+                        spreadsheet_time_extracted=time_extracted,
+                        sheet_name=spreadsheet_id.get("name"),
+                        work_sheets=work_sheets,
+                    )
+                )
 
             # sync "sheet_metadata" and "sheets_loaded" based on the records from spreadsheet metadata
             elif stream_name in ["sheet_metadata", "sheets_loaded"] and stream_name in selected_streams:
