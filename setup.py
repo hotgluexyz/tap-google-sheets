@@ -24,6 +24,7 @@ setup(name='tap-google-sheets-beta',
       },
       entry_points='''
           [console_scripts]
+          tap-google-sheets=tap_google_sheets:main
           tap-google-sheets-beta=tap_google_sheets:main
       ''',
       packages=find_packages(),
