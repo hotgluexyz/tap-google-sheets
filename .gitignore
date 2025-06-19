@@ -14,6 +14,7 @@ singer-check-tap-data
 dist/
 __pycache__/
 venv/
+.venv/
 build/
 tap_google_sheets/.vscode/settings.json
 *.ipynb
