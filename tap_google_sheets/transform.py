@@ -181,13 +181,10 @@ def transform_sheet_number_data(value, sheet_title, col_name, col_letter, row_nu
 def get_column_value(value, unformatted_value, sheet_title, col_name, col_letter, row_num, col_type, row):
         # NULL values
     if value is None or value == '':
-        # Boolean columns default to False
-        if col_type == 'boolValue':
-            return None
         # String columns default to empty string
-        elif col_type == 'stringValue':
+        if col_type == 'stringValue':
             return ""
-        # Number, date, time, and datetime columns default to None
+        # Number, Boolean, date, time, and datetime columns default to None
         else:
             return None
 
