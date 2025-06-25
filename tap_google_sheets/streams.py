@@ -16,6 +16,25 @@ import tap_google_sheets.schema as schema
 
 LOGGER = singer.get_logger()
 
+def sanitize_sheet_name(name):
+    """
+    Sanitize sheet name to make it filesystem-safe by replacing problematic characters
+    """
+    if not name:
+        return name
+    
+    # Replace problematic characters with underscores
+    # Characters that are problematic for filenames: / \ : * ? " < > |
+    sanitized = re.sub(r'[/\\:*?"<>|]', '_', name)
+    
+    # Remove extra spaces and replace remaining spaces with underscores
+    sanitized = re.sub(r'\s+', '_', sanitized.strip())
+    
+    # Remove leading/trailing underscores and dots
+    sanitized = sanitized.strip('_.')
+    
+    return sanitized
+
 def update_currently_syncing(state, stream_name):
     """
     Currently syncing sets the stream currently being delivered in the state.
@@ -482,8 +501,9 @@ class SheetsLoadData(GoogleSheets):
                     sheet_metadata.append(sheet_metadata_transformed)
 
                     sheet_title_old = sheet_title
-                    standard_name = ''.join(x for x in sheet_name.title() if not x.isspace())
-                    sheet_title = f"{standard_name}_{sheet_title}"
+                    standard_name = sanitize_sheet_name(sheet_name.title())
+                    sheet_title_sanitized = sanitize_sheet_name(sheet_title)
+                    sheet_title = f"{standard_name}_{sheet_title_sanitized}"
                     # SHEET_DATA
                     # Should this worksheet tab be synced?
                     if sheet_title in selected_streams:
