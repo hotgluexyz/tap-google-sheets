@@ -426,6 +426,9 @@ def new_transform(self, data, typ, schema, path):
             return False, None
 
     elif typ == "boolean":
+        # Handle None values explicitly to preserve them as None
+        if data is None:
+            return True, None
         # return the data as string itself if the value is of type string
         if isinstance(data, str) and data is not None:
             return True, data

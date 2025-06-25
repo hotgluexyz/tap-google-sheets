@@ -181,7 +181,12 @@ def transform_sheet_number_data(value, sheet_title, col_name, col_letter, row_nu
 def get_column_value(value, unformatted_value, sheet_title, col_name, col_letter, row_num, col_type, row):
         # NULL values
     if value is None or value == '':
-        return None
+        # String columns default to empty string
+        if col_type == 'stringValue':
+            return ""
+        # Number, Boolean, date, time, and datetime columns default to None
+        else:
+            return None
 
     # Convert dates/times from Lotus Notes Serial Numbers
     # DATE-TIME
@@ -233,7 +238,10 @@ def transform_sheet_data(spreadsheet_id, sheet_id, sheet_title, from_row, column
             sheet_data_row_tf['__sdc_sheet_id'] = sheet_id
             sheet_data_row_tf['__sdc_row'] = row_num
             col_num = 1
-            for (value, unformatted_value) in zip(row, unformatted_row):
+            padded_row = row + [None] * (len(cols) - len(row))
+            padded_unformatted_row = unformatted_row + [None] * (len(cols) - len(unformatted_row))
+
+            for (value, unformatted_value) in zip(padded_row, padded_unformatted_row):
                 # Select column metadata based on column index
                 col = cols[col_num - 1]
                 col_skipped = col.get('columnSkipped')
