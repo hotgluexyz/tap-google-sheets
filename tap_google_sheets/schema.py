@@ -133,7 +133,7 @@ def get_sheet_schema_columns(sheet):
                 col_properties = {'type': ['null', 'string']}
                 column_gs_type = 'stringValue'
             elif column_effective_value_type == 'boolValue':
-                col_properties = {'type': ['null', 'boolean', 'string']}
+                col_properties = {'type': ['null', 'boolean']}
                 column_gs_type = 'boolValue'
             elif column_effective_value_type == 'numberValue':
                 if column_number_format_type == 'DATE_TIME':
