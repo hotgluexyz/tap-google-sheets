@@ -16,9 +16,7 @@ def sync(client, config, catalog, state):
     last_stream = singer.get_currently_syncing(state)
     LOGGER.info("last/currently syncing stream: %s", last_stream)
 
-    selected_streams = []
-    for stream in catalog.streams:
-        selected_streams.append(stream.stream)
+    selected_streams = [stream.stream for stream in catalog.streams if stream.is_selected()]
     LOGGER.info("selected_streams: %s", selected_streams)
 
     if not selected_streams:
@@ -44,6 +42,8 @@ def sync(client, config, catalog, state):
                 # if the "spreadsheet_metadata" is selected, then do sync
                 if stream_name in selected_streams:
                     stream_obj.sync(catalog, state, spreadsheet_metadata, time_extracted)
+                else:
+                    LOGGER.info("Skipping %s stream as it isn't selected", stream_name)
 
                 # get sheets from the metadata
                 sheets = spreadsheet_metadata.get("sheets")
