@@ -254,7 +254,10 @@ def transform_sheet_data(spreadsheet_id, sheet_id, sheet_title, from_row, column
                     # get column value based on the type of the value
                     col_val = get_column_value(value, unformatted_value, sheet_title, col_name, col_letter, row_num, col_type, row)
 
-                    sheet_data_row_tf[col_name] = col_val
+                    if col_name in sheet_data_row_tf:
+                        sheet_data_row_tf[col_name + '_' + col_letter + str(col_num)] = col_val
+                    else:
+                        sheet_data_row_tf[col_name] = col_val
                 col_num = col_num + 1
             # APPEND non-empty row
             sheet_data_tf.append(sheet_data_row_tf)
