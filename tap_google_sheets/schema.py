@@ -57,7 +57,6 @@ def get_sheet_schema_columns(sheet):
         }
     }
 
-    header_list = [] # used for checking uniqueness
     columns = []
     prior_header = None
     i = 0
@@ -77,10 +76,6 @@ def get_sheet_schema_columns(sheet):
             column_is_skipped = False
             skipped = 0
             column_name = '{}'.format(header_value)
-            if column_name in header_list:
-                raise Exception('DUPLICATE HEADER ERROR: SHEET: {}, COL: {}, CELL: {}1'.format(
-                    sheet_title, column_name, column_letter))
-            header_list.append(column_name)
 
             first_value = None
             try:
