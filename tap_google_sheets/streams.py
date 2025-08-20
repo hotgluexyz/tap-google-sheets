@@ -171,17 +171,13 @@ class GoogleSheets:
 
         return schemas, field_metadata
 
-    def process_records(self, catalog, stream_name, records, time_extracted, version=None, dup_col_names=[]):
+    def process_records(self, catalog, stream_name, records, time_extracted, version=None):
         """
         Transform/validate batch of records with schema and sent to target
         """
         stream = catalog.get_stream(stream_name)
         schema = stream.schema.to_dict()
         stream_metadata = metadata.to_map(stream.metadata)
-        for dup_of, dup_col_name in dup_col_names:
-            stream_metadata = metadata.write(stream_metadata, ('properties', dup_col_name), 'inclusion', 'automatic')
-            stream_metadata = metadata.write(stream_metadata, ('properties', dup_col_name), 'selected', True)
-            schema['properties'][dup_col_name] = schema['properties'][dup_of]
         with metrics.record_counter(stream_name) as counter:
             for record in records:
                 # Transform record for Singer.io
@@ -553,7 +549,7 @@ class SheetsLoadData(GoogleSheets):
                             unformatted_sheet_data_rows = unformatted_sheet_data.get('values', [])
 
                             # Transform batch of rows to JSON with keys for each column
-                            sheet_data_transformed, row_num, dup_col_names = internal_transform.transform_sheet_data(
+                            sheet_data_transformed, row_num = internal_transform.transform_sheet_data(
                                 spreadsheet_id=self.spreadsheet_id,
                                 sheet_id=sheet_id,
                                 sheet_title=sheet_title,
@@ -580,7 +576,6 @@ class SheetsLoadData(GoogleSheets):
                                 catalog=catalog,
                                 stream_name=sheet_title,
                                 records=sheet_data_transformed,
-                                dup_col_names=dup_col_names,
                                 time_extracted=spreadsheet_time_extracted,
                                 version=activate_version)
                             LOGGER.info('Sheet: {}, records processed: {}'.format(
