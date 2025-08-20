@@ -57,7 +57,6 @@ def get_sheet_schema_columns(sheet):
         }
     }
 
-    header_list = [] # used for checking uniqueness
     columns = []
     prior_header = None
     i = 0
@@ -77,10 +76,6 @@ def get_sheet_schema_columns(sheet):
             column_is_skipped = False
             skipped = 0
             column_name = '{}'.format(header_value)
-            if column_name in header_list:
-                raise Exception('DUPLICATE HEADER ERROR: SHEET: {}, COL: {}, CELL: {}1'.format(
-                    sheet_title, column_name, column_letter))
-            header_list.append(column_name)
 
             first_value = None
             try:
@@ -94,7 +89,6 @@ def get_sheet_schema_columns(sheet):
 
             column_effective_value = first_value.get('effectiveValue', {})
 
-            col_val = None
             if column_effective_value == {}:
                 if ("numberFormat" in first_value.get('effectiveFormat', {})):
                     column_effective_value_type = "numberValue"
@@ -104,12 +98,10 @@ def get_sheet_schema_columns(sheet):
                         sheet_title, column_name, column_letter))
                     LOGGER.info('   Setting column datatype to STRING')
             else:
-                for key, val in column_effective_value.items():
+                for key in column_effective_value.keys():
                     if key in ('numberValue', 'stringValue', 'boolValue'):
                         column_effective_value_type = key
-                        col_val = str(val)
                     elif key in ('errorType', 'formulaType'):
-                        col_val = str(val)
                         raise Exception('DATA TYPE ERROR 2ND ROW VALUE: SHEET: {}, COL: {}, CELL: {}2, TYPE: {}'.format(
                             sheet_title, column_name, column_letter, key))
 
@@ -127,7 +119,6 @@ def get_sheet_schema_columns(sheet):
             #   TIME, DATE_TIME, SCIENTIFIC
             #  https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/cells#NumberFormatType
             #
-            column_format = None # Default
 
             if column_effective_value_type == 'stringValue':
                 col_properties = {'type': ['null', 'string']}
@@ -223,7 +214,10 @@ def get_sheet_schema_columns(sheet):
                     ]
                 }
             # add the column properties in the `properties` in json schema for the respective column name
-            sheet_json_schema['properties'][column_name] = col_properties
+            if column_name not in sheet_json_schema['properties']:
+                sheet_json_schema['properties'][column_name] = col_properties
+            else:
+                sheet_json_schema['properties'][column_name + "_" + column_letter + str(column_index)] = col_properties
 
         prior_header = column_name
         i = i + 1
