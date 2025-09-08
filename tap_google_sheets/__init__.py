@@ -20,9 +20,9 @@ REQUIRED_CONFIG_KEYS = [
     'user_agent'
 ]
 
-def do_discover(client, spreadsheet_ids):
+def do_discover(client, spreadsheet_ids, preserve_sheet_names):
     LOGGER.info('Starting discover')
-    catalog = discover(client, spreadsheet_ids)
+    catalog = discover(client, spreadsheet_ids, preserve_sheet_names)
     json.dump(catalog.to_dict(), sys.stdout, indent=2)
     LOGGER.info('Finished discover')
 
@@ -46,9 +46,10 @@ def main():
         config = parsed_args.config
         files = config.get('files')
         spreadsheet_ids = [f for f in files]
+        preserve_sheet_names = config.get('preserve_sheet_names', False)
 
         if parsed_args.discover:
-            do_discover(client, spreadsheet_ids)
+            do_discover(client, spreadsheet_ids, preserve_sheet_names)
         elif parsed_args.catalog:
             sync(client=client,
                  config=config,

@@ -105,6 +105,9 @@ The [**Google Sheets Setup & Authentication**](https://drive.google.com/open?id=
 
 3. Create your tap's `config.json` file. Include the client_id, client_secret, refresh_token, site_urls (website URL properties in a comma delimited list; do not include the domain-level property in the list), start_date (UTC format), and user_agent (tap name with the api user email address).
 
+    **Optional Configuration Parameters:**
+    - `preserve_sheet_names` (boolean, defaults to false): Controls how sheet names are formatted in the stream names. When false, sheet names are transformed by removing spaces and capitalizing words (e.g., "My Sheet" becomes "MySheet"). When true, sheet names are preserved exactly as they appear in the spreadsheet (e.g., "My Sheet" remains "My Sheet").
+
     ```json
     {
         "client_id": "YOUR_CLIENT_ID",
