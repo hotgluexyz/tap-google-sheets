@@ -453,7 +453,7 @@ class SheetsLoadData(GoogleSheets):
     replication_method = "FULL_TABLE"
     params = {}
 
-    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted,sheet_name,work_sheets=[]):
+    def load_data(self, catalog, state, selected_streams, sheets, spreadsheet_time_extracted,sheet_name,work_sheets=[], preserve_sheet_names=False):
         """
         Load sheet's records if that sheet is selected for sync
         """
@@ -483,7 +483,7 @@ class SheetsLoadData(GoogleSheets):
                     sheet_metadata.append(sheet_metadata_transformed)
 
                     sheet_title_old = sheet_title
-                    standard_name = ''.join(x for x in sheet_name.title() if not x.isspace())
+                    standard_name = schema.get_sheet_name(sheet_name, preserve_sheet_names)
                     sheet_title = f"{standard_name}_{sheet_title}"
                     # SHEET_DATA
                     # Should this worksheet tab be synced?
