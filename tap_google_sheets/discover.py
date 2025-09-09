@@ -1,8 +1,9 @@
 from singer.catalog import Catalog, CatalogEntry, Schema
 from tap_google_sheets.schema import STREAMS
+from tap_google_sheets.schema import get_sheet_name
 
 
-def discover(client,spreadsheet_ids):
+def discover(client,spreadsheet_ids, preserve_sheet_names):
     catalog = Catalog([])
     discovered_metadata_streams = []
     for spreadsheet_id in spreadsheet_ids:
@@ -13,10 +14,10 @@ def discover(client,spreadsheet_ids):
             # loop over the schema and prepare catalog
             for stream_name, schema_dict in schemas.items():
                 if stream_name not in metadata_stream_list:
-                   standard_name = ''.join(x for x in spreadsheet_id.get('name').title() if not x.isspace())
-                   stream_name_new = f"{standard_name}_{stream_name}"
-                   field_metadata[stream_name_new]=  field_metadata[stream_name]
-                   stream_name = stream_name_new
+                    standard_name = get_sheet_name(spreadsheet_id.get('name'), preserve_sheet_names)
+                    stream_name_new = f"{standard_name}_{stream_name}"
+                    field_metadata[stream_name_new]=  field_metadata[stream_name]
+                    stream_name = stream_name_new
 
                 schema = Schema.from_dict(schema_dict)
                 mdata = field_metadata[stream_name]

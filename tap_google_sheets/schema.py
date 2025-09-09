@@ -254,3 +254,9 @@ def get_sheet_metadata(sheet, spreadsheet_id, client):
         sheet_json_schema, columns = None, None
 
     return sheet_json_schema, columns
+
+def get_sheet_name(sheet_name, preserve_sheet_names):
+    if preserve_sheet_names:
+        return sheet_name
+    else:
+        return ''.join(x for x in sheet_name.title() if not x.isspace())

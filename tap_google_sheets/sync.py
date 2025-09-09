@@ -65,6 +65,7 @@ def sync(client, config, catalog, state):
                         spreadsheet_time_extracted=time_extracted,
                         sheet_name=spreadsheet_id.get("name"),
                         work_sheets=work_sheets,
+                        preserve_sheet_names=config.get('preserve_sheet_names', False)
                     )
                 )
 
